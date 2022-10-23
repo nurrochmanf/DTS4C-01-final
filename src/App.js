@@ -4,14 +4,15 @@ import './App.css';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import HomePage from './pages/HomePage';
+import { grey } from '@mui/material/colors';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#424242',
+      main: grey[800],
     },
     secondary: {
-      main: '#a1887f',
+      main: grey[200],
     },
   },
 });

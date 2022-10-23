@@ -1,6 +1,5 @@
-import { Image, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import { Stack } from '@mui/system';
 import React, { useState } from 'react';
 import { initialFormValue, minMaxValidation, requiredValidation, initialValidationFunc } from '../utils/validation';
@@ -89,7 +88,6 @@ const Login = () => {
         }
     }
 
-    const theme = useTheme();
     return (
         <Box sx={{
             display: 'flex',
