@@ -1,4 +1,4 @@
-import { Breadcrumbs, Button, Card, CardActionArea, CardContent, Container, Grid, Paper, Stack, Typography } from '@mui/material';
+import { Breadcrumbs, Button, Card, CardActionArea, CardContent, Container, Grid, Stack, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -14,7 +14,7 @@ const DetailNews = () => {
     const loading = useSelector((state) => state.loading.loading);
     const dispatch = useDispatch();
 
-    const fetchData = async () => {
+    const fetchData = async (newsID) => {
         const response = await GetDetailNews(dispatch, newsID);
         if(response.status) {
             setDetailData(response.data);
@@ -22,7 +22,7 @@ const DetailNews = () => {
     }
 
     useEffect(() => {
-        fetchData()
+        fetchData(newsID)
         .catch(console.error);
     }, []);
     return loading ? (<Loader />): (

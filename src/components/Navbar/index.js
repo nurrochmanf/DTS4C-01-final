@@ -33,22 +33,21 @@ const Search = styled('div')(({ theme }) => ({
   },
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
+// const SearchIconWrapper = styled('div')(({ theme }) => ({
+//   padding: theme.spacing(0, 2),
+//   height: '100%',
+//   position: 'absolute',
+//   display: 'flex',
+//   alignItems: 'center',
+//   justifyContent: 'center',
+//   cursor: 'pointer'
+// }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: 'inherit',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
     transition: theme.transitions.create('width'),
     width: '100%',
     [theme.breakpoints.up('sm')]: {
@@ -61,6 +60,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar = () => {
+  const [search, setSearch] = useState("")
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
@@ -114,6 +114,12 @@ const Navbar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleEnterSearch = (e) => {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      navigate('/search', {state : {search: search}})
+    }
+  }
 
   return (
     <AppBar position="static">
@@ -212,12 +218,17 @@ const Navbar = () => {
           </Box>
           {/* Menu Item at MD */}
           <Search>
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
             <StyledInputBase
+              startAdornment={
+                <IconButton onClick={() => navigate('/search', {state : {search: search}})}>
+                  <SearchIcon />
+                </IconButton>
+              }
               placeholder="Search…"
               inputProps={{ 'aria-label': 'search' }}
+              value={search}
+              onChange={(e) => {setSearch(e.target.value)}}
+              onKeyUp={handleEnterSearch}
             />
           </Search>
           <Box sx={{ flexGrow: 0, ml:1}}>

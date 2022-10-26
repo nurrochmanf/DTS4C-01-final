@@ -6,7 +6,6 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import { grey } from '@mui/material/colors';
 import DetailNews from './pages/DetailNews';
-import { AuthProvider } from './components/Provider/AuthProvider';
 import Error505 from './pages/Error505';
 import Error404 from './pages/Error404';
 import Register from './pages/Register';
@@ -48,6 +47,7 @@ function App() {
           <Route path='/Error505' element={<Error505/>}/>
           <Route path='/' element={<Layout/>}>
             <Route index element={<HomePage />} />
+            <Route path='/testing' element={<></>}/>
             <Route path='/home' element={<HomePage/>}/>
             <Route path='/detail/:newsID' element={<DetailNews/>}/>
           </Route>
