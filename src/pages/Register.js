@@ -2,10 +2,10 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
 import React, { useEffect, useState } from 'react';
-import { initialFormValue, minMaxValidation, requiredValidation, initialValidationFunc, emailValidation } from '../utils/validation';
+import { initialFormValue, requiredValidation, initialValidationFunc, emailValidation, minMaxValidation } from '../utils/validation';
 import logo from '../assets/images/logo-news.png'
-import { useLocation, useNavigate } from 'react-router-dom';
-import {signingIn} from '../utils/firebase/login'
+import { useNavigate } from 'react-router-dom';
+import { signingUp } from '../utils/firebase/register'
 import { listener } from '../utils/firebase/listener';
 
 const initialFormData = {
@@ -17,6 +17,10 @@ const initialFormData = {
             {
                 initialValidationFunc,
                 action: requiredValidation,
+            },
+            {
+                initialValidationFunc,
+                action: emailValidation,
             }
         ]
     },
@@ -33,12 +37,11 @@ const initialFormData = {
     }
 }
 
-const Login = () => {
+const Register = () => {
     const [formData, setFormData] = useState(initialFormData)
     const [visibility, setVisibility] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const navigate = useNavigate();
-    const location = useLocation();
 
     const handleOnChange = (e) => {
         let validationRes;
@@ -84,12 +87,12 @@ const Login = () => {
 
         setFormData({...tempFormData});
         if (!arrIsValid.includes(false)) {
-            const signedIn = await signingIn(formData.email.value, formData.password.value);
-            if(signedIn.error){
-                setErrorMessage(signedIn.data.message);
+            const response = await signingUp(formData.email.value, formData.password.value);
+            if(response.error){
+                setErrorMessage(response.data.message);
             }else{
                 setErrorMessage("");
-                navigate("/")
+                navigate('/');
             }
         }
     }
@@ -125,7 +128,7 @@ const Login = () => {
                 <Stack height='100%' direction='column' spacing={3}>
                     <Stack width='100%' direction='column' textAlign='center' alignItems='center' spacing={1}>
                         <img src={logo} alt='logo' width={60}/>
-                        <Typography variant='h4'> LOGIN </Typography>
+                        <Typography variant='h4'> REGISTER </Typography>
                     </Stack>
                     <Stack width='100%' spacing={2}>
                         <FormControl fullWidth error={formData.email.validation.isValid ? false : true}>
@@ -164,11 +167,8 @@ const Login = () => {
                                 <FormHelperText>{formData.password.validation.message}</FormHelperText>
                             )}
                         </FormControl>
-                        <Typography>
-                            Belum memiliki akun ?  
-                        </Typography>
                         {(errorMessage)? <Typography variant='caption' color='red'>{errorMessage}</Typography>:null}
-                        <Button variant='contained' onClick={handleSubmit}>Login</Button>
+                        <Button variant='contained' onClick={handleSubmit}>Register</Button>
                     </Stack>
                 </Stack>
             </Paper>
@@ -176,4 +176,4 @@ const Login = () => {
     );
 }
 
-export default Login;
+export default Register;

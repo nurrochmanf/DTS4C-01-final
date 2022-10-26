@@ -9,6 +9,7 @@ import DetailNews from './pages/DetailNews';
 import { AuthProvider } from './components/Provider/AuthProvider';
 import Error505 from './pages/Error505';
 import Error404 from './pages/Error404';
+import Register from './pages/Register';
 
 const theme = createTheme({
   palette: {
@@ -43,6 +44,7 @@ function App() {
       <Router>
         <Routes>
           <Route path='/login' element={<Login/>}/>
+          <Route path='/register' element={<Register/>}/>
           <Route path='/Error505' element={<Error505/>}/>
           <Route path='/' element={<Layout/>}>
             <Route index element={<HomePage />} />
