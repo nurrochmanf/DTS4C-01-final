@@ -28,6 +28,26 @@ export const requiredValidation = (value, name, parameters) => {
     }
 }
 
+export const emailValidation = (value, name) => {
+    const isValid = String(value)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+
+    if (isValid) {
+        return {
+            message: "",
+            isValid: true
+        }
+    }else {
+        return {
+            message: `format ${name} tidak sesuai : harus menggunakan format email`,
+            isValid: false
+        }
+    }
+}
+
 export const minMaxValidation = (value, name, parameters) => {
 
     for (const[key, val] of Object.entries(parameters)) {

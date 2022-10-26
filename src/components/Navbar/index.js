@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,9 +14,9 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { alpha, InputBase, styled } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-
-const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+import { useNavigate } from 'react-router-dom';
+import { ContainerMaxWidth } from '../../constanta/constanta';
+import { singingOut } from '../../utils/firebase/logout';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -61,8 +61,44 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Navbar = () => {
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const navigate = useNavigate();
+  const pages = [
+    {
+      displayName: 'Home',
+      link: '/home'
+    },
+    {
+      displayName: 'Categories',
+      link: '/categories'
+    }
+  ];
+  const settings = [
+    {
+      displayName: 'Profile',
+      action: () => {
+        //todo logout
+        handleCloseUserMenu();
+        navigate('/Profile');
+      }
+    },
+    {
+      displayName: 'Logout',
+      action: () => {
+        //todo logout
+        handleCloseUserMenu();
+        signOut().catch(console.error);
+      }
+    },
+  ];
+
+  const signOut = async () => {
+    const signedOut = await singingOut();
+    if (!signedOut.error) {
+      navigate('/login');
+    }
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -81,14 +117,13 @@ const Navbar = () => {
 
   return (
     <AppBar position="static">
-      <Container maxWidth="xl">
+      <Container maxWidth={ContainerMaxWidth}>
         <Toolbar disableGutters>
           <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
           <Typography
             variant="h6"
             noWrap
-            component="a"
-            href="/"
+            onClick={() => {navigate("/")}}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -97,11 +132,13 @@ const Navbar = () => {
               letterSpacing: '.3rem',
               color: 'inherit',
               textDecoration: 'none',
+              cursor:'pointer'
             }}
           >
-            LOGO
+            NEWS
           </Typography>
 
+          {/* Menu Item at XS */}
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -132,12 +169,16 @@ const Navbar = () => {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.displayName} onClick={() => {
+                  handleCloseNavMenu();
+                  navigate(page.link);
+                }}>
+                  <Typography textAlign="center">{page.displayName}</Typography>
                 </MenuItem>
               ))}
             </Menu>
           </Box>
+          {/* Menu Item at XS */}
           <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
           <Typography
             variant="h5"
@@ -155,20 +196,21 @@ const Navbar = () => {
               textDecoration: 'none',
             }}
           >
-            LOGO
+            NEWS
           </Typography>
+          {/* Menu Item at MD */}
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Button
-                key={page}
-                onClick={handleCloseNavMenu}
+                key={page.displayName}
+                onClick={() => {navigate(page.link)}}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                {page}
+                {page.displayName}
               </Button>
             ))}
           </Box>
-
+          {/* Menu Item at MD */}
           <Search>
             <SearchIconWrapper>
               <SearchIcon />
@@ -201,8 +243,8 @@ const Navbar = () => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+                <MenuItem key={setting.displayName} onClick={setting.action}>
+                  <Typography textAlign="center">{setting.displayName}</Typography>
                 </MenuItem>
               ))}
             </Menu>

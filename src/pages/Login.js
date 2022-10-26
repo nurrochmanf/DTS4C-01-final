@@ -1,24 +1,22 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { Box, Button, FormControl, FormHelperText, IconButton, InputAdornment, InputLabel, OutlinedInput, Paper, Typography } from '@mui/material';
 import { Stack } from '@mui/system';
-import React, { useState } from 'react';
-import { initialFormValue, minMaxValidation, requiredValidation, initialValidationFunc } from '../utils/validation';
+import React, { useEffect, useState } from 'react';
+import { initialFormValue, minMaxValidation, requiredValidation, initialValidationFunc, emailValidation } from '../utils/validation';
 import logo from '../assets/images/logo-news.png'
+import { useNavigate } from 'react-router-dom';
+import {signingIn} from '../utils/firebase/login'
+import { listener } from '../utils/firebase/listener';
 
 const initialFormData = {
-    username : {
+    email : {
         ...initialFormValue, 
-        name: "username",
-        title: "Username",
+        name: "email",
+        title: "Email",
         validationFunc: [
             {
                 initialValidationFunc,
-                parameters: {
-                    min : 4,
-                    max : 12,
-                },
-                action: minMaxValidation,
-
+                action: requiredValidation,
             }
         ]
     },
@@ -30,7 +28,6 @@ const initialFormData = {
             {
                 initialValidationFunc,
                 action: requiredValidation,
-
             }
         ]
     }
@@ -39,6 +36,8 @@ const initialFormData = {
 const Login = () => {
     const [formData, setFormData] = useState(initialFormData)
     const [visibility, setVisibility] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleOnChange = (e) => {
         let validationRes;
@@ -60,7 +59,7 @@ const Login = () => {
         })
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         let tempFormData = formData;
         let arrIsValid = [];
         for (let [k,v] of Object.entries(tempFormData) ) {
@@ -84,9 +83,23 @@ const Login = () => {
 
         setFormData({...tempFormData});
         if (!arrIsValid.includes(false)) {
-            console.log("Berhasil");
+            const signedIn = await signingIn(formData.email.value, formData.password.value);
+            if(signedIn.error){
+                setErrorMessage(signedIn.data.message);
+            }else{
+                setErrorMessage("");
+                navigate("/")
+            }
         }
     }
+
+    useEffect(() => {
+        listener((val) => {
+            if(val){
+                navigate("/");
+            }
+        });
+    },[]);
 
     return (
         <Box sx={{
@@ -114,16 +127,17 @@ const Login = () => {
                         <Typography variant='h4'> LOGIN </Typography>
                     </Stack>
                     <Stack width='100%' spacing={2}>
-                        <FormControl fullWidth error={formData.username.validation.isValid ? false : true}>
-                            <InputLabel>Username</InputLabel>
+                        <FormControl fullWidth error={formData.email.validation.isValid ? false : true}>
+                            <InputLabel>Email</InputLabel>
                             <OutlinedInput
-                                value={formData.username.value}
-                                name={formData.username.name}
+                                type='email'
+                                value={formData.email.value}
+                                name={formData.email.name}
                                 onChange={handleOnChange}
-                                label={formData.username.name}
+                                label={formData.email.name}
                             />
-                            {formData.username.validation.isValid ? null : (
-                                <FormHelperText>{formData.username.validation.message}</FormHelperText>
+                            {formData.email.validation.isValid ? null : (
+                                <FormHelperText>{formData.email.validation.message}</FormHelperText>
                             )}
                         </FormControl>
                         <FormControl fullWidth error={formData.password.validation.isValid ? false : true}>
@@ -152,6 +166,7 @@ const Login = () => {
                         <Typography>
                             Belum memiliki akun ?  
                         </Typography>
+                        {(errorMessage)? <Typography variant='caption' color='red'>{errorMessage}</Typography>:null}
                         <Button variant='contained' onClick={handleSubmit}>Login</Button>
                     </Stack>
                 </Stack>
